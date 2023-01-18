@@ -1,0 +1,29 @@
+---
+version: "3.4"
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 10m
+      max-file: "3"
+
+services:
+  torrent:
+    image: lscr.io/linuxserver/qbittorrent:${IMAGE_TAG__QBITTORRENT:-latest}
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - ${PORT__QBITTORRENT_UI:-8080}:8080
+      - ${PORT__QBITTORRENT_EXT:-6881}:6881 
+      - ${PORT__QBITTORRENT_EXT:-6881}:6881/udp
+    volumes:
+      - ./docker/torrent/config/watched_folders.json:/config/qBittorrent/watched_folders.json
+      - torrent_config:/config
+      - torrent_watch:/watch
+      - torrent_downloads:/downloads
+
+volumes:
+  torrent_watch:
+  torrent_config:
+  torrent_downloads:
